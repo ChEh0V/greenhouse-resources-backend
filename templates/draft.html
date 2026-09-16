@@ -46,11 +46,20 @@
     <textarea class="form-input form-input--area" id="short_description"
               rows="3">{{ resource.short_description }}</textarea>
 
-    <p class="form-note">
-
-    </p>
+    <form method="post" action="/greenhouse_resources/publish">
+        <input type="hidden" name="resource_id" value="{{ resource.resource_id }}">
+        <input type="hidden" name="short_description" value="{{ resource.short_description }}">
+        <input type="hidden" name="unit" value="{{ resource.unit }}">
+        <input type="hidden" name="min_value" value="{{ resource.min_value or 0 }}">
+        <button class="greenhouse-button" type="submit">Опубликовать</button>
+    </form>
     {% else %}
-    <p class="empty-state">Услуги в статусе «Черновик» нет.</p>
+    <form method="post" action="/greenhouse_resources/create">
+        <label class="form-label" for="new_name">Название ресурса</label>
+        <input class="form-input" id="new_name" name="resource_name" type="text" required>
+        <p class="form-note">Изображение и видео подставляются по умолчанию.</p>
+        <button class="greenhouse-button" type="submit">Далее</button>
+    </form>
     {% endif %}
 
 </section>

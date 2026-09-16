@@ -335,3 +335,15 @@ body {
 .tab-bar__item:hover { color: var(--greenhouse-navy); }
 
 .tab-bar__item--active { color: var(--greenhouse-accent); font-weight: 600; }
+
+.greenhouse-button--small { height: 32px; font-size: 12px; margin-top: 6px; }
+.resource-card__delete { margin-bottom: 4px; }
+
+.resource-grid > form { margin: 0; }
+.resource-card { grid-column: auto; }
+.resource-grid { grid-auto-flow: row; }
+.resource-card__delete { grid-column: span 1; }
+
+.resource-grid { grid-template-columns: repeat(2, 1fr); }
+.resource-card__delete { display: contents; }
+.resource-card__delete button { width: 100%; }

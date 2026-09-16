@@ -33,6 +33,10 @@
                 <p class="resource-card__likes">&#9829; {{ resource.likes_count }}</p>
             </div>
         </a>
+        <form class="resource-card__delete" method="post" action="/greenhouse_resources/delete" style="grid-column:auto">
+            <input type="hidden" name="resource_id" value="{{ resource.resource_id }}">
+            <button class="greenhouse-button greenhouse-button--small" type="submit">Удалить</button>
+        </form>
         {% else %}
         <p class="empty-state">Ничего не найдено. Уменьшите значение фильтра.</p>
         {% endfor %}
