@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ресурсы теплицы на Севере</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+<div class="greenhouse-app">
+
+    {% block content %}{% endblock %}
+
+    <nav class="tab-bar">
+        <a class="tab-bar__item {% if active_tab == 'feed' %}tab-bar__item--active{% endif %}"
+           href="/greenhouse_resources/feed">
+            <span class="tab-bar__icon">&#9654;</span>Лента
+        </a>
+        <a class="tab-bar__item {% if active_tab == 'draft' %}tab-bar__item--active{% endif %}"
+           href="/greenhouse_resources/draft">
+            <span class="tab-bar__icon">&#43;</span>Добавление
+        </a>
+        <a class="tab-bar__item {% if active_tab == 'grid' %}tab-bar__item--active{% endif %}"
+           href="/greenhouse_resources">
+            <span class="tab-bar__icon">&#9632;</span>Плитка
+        </a>
+    </nav>
+
+</div>
+</body>
+</html>

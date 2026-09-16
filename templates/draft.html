@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="resource-draft">
+
+    <header class="resource-draft__header">
+        <h1 class="resource-draft__title">Добавление</h1>
+        <span class="status-badge status-badge--draft">Черновик</span>
+    </header>
+
+    {% if resource %}
+    <div class="upload-row">
+        <div class="upload-field">
+            <span class="upload-field__icon">&#9654;</span>
+            Видео ресурса
+        </div>
+        <div class="upload-field">
+            <span class="upload-field__icon">&#9632;</span>
+            Изображение
+        </div>
+    </div>
+
+    <label class="form-label" for="resource_name">Название ресурса</label>
+    <input class="form-input" id="resource_name" type="text"
+           value="{{ resource.resource_name }}">
+
+    <label class="form-label" for="equipment">Оборудование</label>
+    <input class="form-input" id="equipment" type="text"
+           value="{{ resource.equipment }}">
+
+    <label class="form-label" for="unit">Единица измерения</label>
+    <select class="form-input" id="unit">
+        <option {% if resource.unit == 'м²' %}selected{% endif %}>м²</option>
+        <option {% if resource.unit == 'кВт·ч' %}selected{% endif %}>кВт·ч</option>
+        <option {% if resource.unit == 'Гкал' %}selected{% endif %}>Гкал</option>
+        <option {% if resource.unit == 'м³' %}selected{% endif %}>м³</option>
+        <option {% if resource.unit == 'кг' %}selected{% endif %}>кг</option>
+        <option {% if resource.unit == 'м³/ч' %}selected{% endif %}>м³/ч</option>
+    </select>
+
+    <label class="form-label" for="min_value">Минимальное значение</label>
+    <input class="form-input" id="min_value" type="number" step="0.1"
+           value="{{ resource.min_value }}">
+
+    <label class="form-label" for="short_description">Описание</label>
+    <textarea class="form-input form-input--area" id="short_description"
+              rows="3">{{ resource.short_description }}</textarea>
+
+    <p class="form-note">
+        Данные формы не сохраняются в рамках лабораторной работы №1.
+    </p>
+    {% else %}
+    <p class="empty-state">Услуги в статусе «Черновик» нет.</p>
+    {% endif %}
+
+</section>
+
+{% endblock %}

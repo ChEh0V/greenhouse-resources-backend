@@ -1,0 +1,337 @@
+/* ============================================================
+   Расчёт требуемых ресурсов для теплицы на Севере
+   Стилистика заимствована с сайта priva.com
+   Три фирменных цвета сайта:
+       #051D34  тёмно-синий
+       #FFFFFF  белый
+       #00BF72  зелёный акцент
+   ============================================================ */
+
+:root {
+    --greenhouse-navy:   #051D34;
+    --greenhouse-white:  #FFFFFF;
+    --greenhouse-accent: #00BF72;
+
+    --greenhouse-radius:      12px;
+    --greenhouse-radius-pill: 999px;
+    --greenhouse-gap:         12px;
+    --greenhouse-padding:     20px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--greenhouse-white);
+    color: var(--greenhouse-navy);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+/* Дизайн не адаптивный: при изменении размера окна
+   меняется только центрирование страницы */
+.greenhouse-app {
+    width: 390px;
+    min-height: 844px;
+    position: relative;
+    padding-bottom: 76px;
+    background: var(--greenhouse-white);
+}
+
+.empty-state {
+    padding: var(--greenhouse-padding);
+    color: rgba(5, 29, 52, 0.55);
+}
+
+/* ---------- Лента ---------- */
+
+.resource-feed {
+    position: relative;
+    height: 768px;
+    background: var(--greenhouse-navy);
+}
+
+.resource-feed__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.resource-feed__actions {
+    position: absolute;
+    right: 12px;
+    bottom: 180px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    text-align: center;
+}
+
+.resource-feed__action {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--greenhouse-radius-pill);
+    background: rgba(5, 29, 52, 0.55);
+    color: var(--greenhouse-white);
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.resource-feed__action em {
+    font-size: 11px;
+    font-style: normal;
+}
+
+.resource-feed__action:hover { background: var(--greenhouse-accent); }
+
+.resource-feed__next {
+    background: var(--greenhouse-accent);
+    color: var(--greenhouse-navy);
+}
+
+.resource-feed__next:hover { background: var(--greenhouse-white); }
+
+.resource-feed__info {
+    position: absolute;
+    left: 0;
+    right: 72px;
+    bottom: 0;
+    z-index: 1;
+    padding: var(--greenhouse-padding);
+    background: rgba(5, 29, 52, 0.78);
+    color: var(--greenhouse-white);
+}
+
+.resource-feed__name  { font-size: 20px; font-weight: 600; }
+
+.resource-feed__value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--greenhouse-accent);
+}
+
+.resource-feed__equipment { font-size: 13px; opacity: 0.75; }
+
+/* Короткое описание в одну строку */
+.resource-feed__description {
+    margin-top: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------- Страница добавления ---------- */
+
+.resource-draft { padding: var(--greenhouse-padding); }
+
+.resource-draft__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.resource-draft__title { font-size: 24px; }
+
+.upload-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--greenhouse-gap);
+    margin-bottom: 18px;
+}
+
+.upload-field {
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px dashed rgba(5, 29, 52, 0.35);
+    border-radius: var(--greenhouse-radius);
+    font-size: 12px;
+    color: rgba(5, 29, 52, 0.6);
+}
+
+.upload-field:hover { border-color: var(--greenhouse-accent); }
+
+.upload-field__icon { font-size: 20px; }
+
+.form-label {
+    display: block;
+    margin: 14px 0 6px;
+    font-size: 12px;
+    color: rgba(5, 29, 52, 0.6);
+}
+
+.form-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid rgba(5, 29, 52, 0.2);
+    border-radius: var(--greenhouse-radius);
+    background: var(--greenhouse-white);
+    color: var(--greenhouse-navy);
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.form-input:focus { outline: 2px solid var(--greenhouse-accent); }
+
+.form-input--area { height: auto; padding: 12px 14px; }
+
+.form-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: rgba(5, 29, 52, 0.55);
+}
+
+/* ---------- Плитка ---------- */
+
+.resource-grid-page { padding-bottom: 20px; }
+
+.resource-grid-page__title {
+    padding: var(--greenhouse-padding) var(--greenhouse-padding) 12px;
+    font-size: 24px;
+}
+
+/* Тёмно-синяя панель фильтрации */
+.resource-filter {
+    margin: 0 var(--greenhouse-padding) 16px;
+    padding: 16px;
+    background: var(--greenhouse-navy);
+    border-radius: var(--greenhouse-radius);
+    color: var(--greenhouse-white);
+}
+
+.resource-filter__label { display: block; font-size: 13px; margin-bottom: 10px; }
+
+.resource-filter__slider { width: 100%; accent-color: var(--greenhouse-accent); }
+
+.resource-filter__bounds {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    opacity: 0.6;
+    margin-bottom: 12px;
+}
+
+/* Полукруглая кнопка */
+.greenhouse-button {
+    width: 100%;
+    height: 44px;
+    background: var(--greenhouse-accent);
+    color: var(--greenhouse-navy);
+    border: none;
+    border-radius: var(--greenhouse-radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.greenhouse-button:hover  { background: var(--greenhouse-white); }
+.greenhouse-button:active { background: rgba(0, 191, 114, 0.7); }
+
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--greenhouse-gap);
+    padding: 0 var(--greenhouse-padding);
+}
+
+/* Белые карточки */
+.resource-card {
+    background: var(--greenhouse-white);
+    border: 1px solid rgba(5, 29, 52, 0.15);
+    border-radius: var(--greenhouse-radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.resource-card:hover {
+    border-color: var(--greenhouse-accent);
+    box-shadow: 0 0 0 1px var(--greenhouse-accent);
+}
+
+.resource-card:active { border-color: var(--greenhouse-navy); }
+
+.resource-card__image {
+    width: 100%;
+    height: 96px;
+    object-fit: cover;
+    display: block;
+}
+
+.resource-card__body { padding: 10px 12px 12px; }
+
+.resource-card__name  { font-size: 14px; font-weight: 600; }
+.resource-card__unit  { font-size: 11px; color: rgba(5, 29, 52, 0.55); }
+
+.resource-card__value {
+    margin-top: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--greenhouse-accent);
+}
+
+.resource-card__likes {
+    margin-top: 4px;
+    font-size: 12px;
+    color: rgba(5, 29, 52, 0.55);
+}
+
+/* ---------- Статусы услуги ---------- */
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: var(--greenhouse-radius-pill);
+    font-size: 11px;
+}
+
+.status-badge--draft     { background: var(--greenhouse-navy);   color: var(--greenhouse-accent); }
+.status-badge--published { background: var(--greenhouse-accent); color: var(--greenhouse-navy); }
+.status-badge--deleted   { border: 1px solid rgba(5, 29, 52, 0.4); color: rgba(5, 29, 52, 0.55); }
+
+/* ---------- Панель вкладок ---------- */
+
+.tab-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 76px;
+    display: flex;
+    background: var(--greenhouse-white);
+    border-top: 1px solid rgba(5, 29, 52, 0.15);
+}
+
+.tab-bar__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 11px;
+    color: rgba(5, 29, 52, 0.55);
+    text-decoration: none;
+}
+
+.tab-bar__icon { font-size: 16px; }
+
+.tab-bar__item:hover { color: var(--greenhouse-navy); }
+
+.tab-bar__item--active { color: var(--greenhouse-accent); font-weight: 600; }

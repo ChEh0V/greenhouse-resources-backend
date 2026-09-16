@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="resource-grid-page">
+
+    <h1 class="resource-grid-page__title">Ресурсы</h1>
+
+    <form class="resource-filter" method="get" action="/greenhouse_resources">
+        <label class="resource-filter__label" for="min_value">
+            Минимальное значение от {{ min_value }}
+        </label>
+        <input class="resource-filter__slider" id="min_value" name="min_value"
+               type="range"
+               min="{{ slider_min }}" max="{{ slider_max }}" step="0.1"
+               value="{{ min_value }}">
+        <div class="resource-filter__bounds">
+            <span>{{ slider_min }}</span>
+            <span>{{ slider_max }}</span>
+        </div>
+        <button class="greenhouse-button" type="submit">Найти</button>
+    </form>
+
+    <div class="resource-grid">
+        {% for resource in resources %}
+        <a class="resource-card"
+           href="/greenhouse_resources/feed?resource_id={{ resource.resource_id }}">
+            <img class="resource-card__image" src="{{ resource.image_url }}"
+                 alt="{{ resource.resource_name }}">
+            <div class="resource-card__body">
+                <p class="resource-card__name">{{ resource.resource_name }}</p>
+                <p class="resource-card__unit">{{ resource.unit }}</p>
+                <p class="resource-card__value">от {{ resource.min_value }}</p>
+                <p class="resource-card__likes">&#9829; {{ resource.likes_count }}</p>
+            </div>
+        </a>
+        {% else %}
+        <p class="empty-state">Ничего не найдено. Уменьшите значение фильтра.</p>
+        {% endfor %}
+    </div>
+
+</section>
+
+{% endblock %}

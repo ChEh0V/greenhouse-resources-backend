@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if resource %}
+<section class="resource-feed">
+
+    <video class="resource-feed__video"
+           autoplay muted loop playsinline
+           poster="{{ resource.image_url }}">
+        <source src="{{ resource.video_url }}" type="video/mp4">
+    </video>
+
+    <div class="resource-feed__actions">
+        <span class="resource-feed__action">&#9829;<em>{{ resource.likes_count }}</em></span>
+        <span class="resource-feed__action">&#9834;</span>
+        <a class="resource-feed__action resource-feed__next"
+           href="/greenhouse_resources/feed?resource_id={{ resource.resource_id }}&next=true">&#8594;</a>
+    </div>
+
+    <div class="resource-feed__info">
+        <p class="resource-feed__name">{{ resource.resource_name }}</p>
+        <p class="resource-feed__value">от {{ resource.min_value }} {{ resource.unit }}</p>
+        <p class="resource-feed__equipment">{{ resource.equipment }}</p>
+        <p class="resource-feed__description">{{ resource.short_description }}</p>
+    </div>
+
+</section>
+{% else %}
+<p class="empty-state">Опубликованных ресурсов пока нет.</p>
+{% endif %}
+
+{% endblock %}
