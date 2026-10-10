@@ -1,7 +1,8 @@
 # Greenhouse Resources
 
 Расчёт требуемых ресурсов для выращивания урожая в теплице на Севере.
-Лабораторная работа №3: веб-сервис (REST API) на FastAPI + SQLAlchemy + Alembic, файлы в Minio.
+Лабораторная работа №4: веб-сервис (REST API) на FastAPI + SQLAlchemy + Alembic, файлы в Minio,
+авторизация через сессии в Redis и куку `session_id`, документация Swagger.
 
 ## Запуск
 
@@ -14,11 +15,25 @@ alembic upgrade head
 uvicorn main:app --reload
 ```
 
-API: http://127.0.0.1:8000/api, Adminer: http://127.0.0.1:8081.
+API: http://127.0.0.1:8000/api, Swagger: http://127.0.0.1:8000/docs, Adminer: http://127.0.0.1:8081.
 Коллекция запросов для Postman/Insomnia: `postman/greenhouse_resources.postman_collection.json`.
 
-Создатель ресурсов до авторизации зафиксирован функцией-singleton
-`get_current_user_id()` в `greenhouse_resources/singleton.py` (пользователь `chekhovich`, ид 2).
+## Авторизация
+
+После `POST /api/greenhouse_users/login` в Redis создаётся ключ `session:<ид сессии>`
+со значением `{"user_id": 2, "login": "chekhovich"}` и сроком жизни 1 час,
+а ид сессии возвращается в httpOnly-куке `session_id`.
+
+Без авторизации доступны только методы чтения (1, 2) и регистрация/вход (8, 9) — для гостя
+`is_creator` и `is_liked` равны 0. Остальные методы без сессии возвращают 401.
+Создатель нового ресурса заполняется из сессии автоматически.
+
+Просмотр сессий в Redis:
+
+```bash
+docker exec -it greenhouse_redis redis-cli KEYS "session:*"
+docker exec -it greenhouse_redis redis-cli GET session:<ид>
+```
 
 ## HTTP-методы
 
@@ -39,10 +54,10 @@ API: http://127.0.0.1:8000/api, Adminer: http://127.0.0.1:8081.
 | № | Метод | URL | Вход | Выход |
 |---|---|---|---|---|
 | 8 | POST | `/api/greenhouse_users/register` | JSON `{login: str, password: str}` | 201, `{user_id, login}`; 409 если логин занят |
-| 9 | POST | `/api/greenhouse_users/login` | JSON `{login: str, password: str}` | `{user_id, login}` (заглушка до ЛР4) |
-| 10 | POST | `/api/greenhouse_users/logout` | — | 204 (заглушка до ЛР4) |
+| 9 | POST | `/api/greenhouse_users/login` | JSON `{login: str, password: str}` | `{user_id, login}` + кука `session_id`; 401 при неверном пароле |
+| 10 | POST | `/api/greenhouse_users/logout` | кука `session_id` | 204, сессия удаляется из Redis |
 
-Ответы об ошибках — только стандартные коды HTTP (400, 403, 404, 409, 422).
+Ответы об ошибках — только стандартные коды HTTP (400, 401, 403, 404, 409, 422).
 
 ## Таблицы
 

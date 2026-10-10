@@ -16,7 +16,7 @@ from greenhouse_resources.schemas import (
     GreenhouseResourceCard, GreenhouseResourceDraft, GreenhouseResourceFeed,
     GreenhouseResourcePublish, ResourceLikeIn, ResourceLikeOut,
 )
-from greenhouse_resources.singleton import get_current_user_id
+from greenhouse_resources.auth import get_current_user_id, get_optional_user_id
 
 router = APIRouter(prefix="/api/greenhouse_resources", tags=["Ресурсы теплицы"])
 
@@ -50,10 +50,11 @@ def draft_to_schema(resource):
 
 
 # ------------------------------------------------------------------ 1. GET список
-@router.get("", response_model=List[GreenhouseResourceCard])
+@router.get("", response_model=List[GreenhouseResourceCard],
+            summary="Список ресурсов (плитка) с фильтром")
 def list_greenhouse_resources(min_value: Optional[float] = None,
                               session: Session = Depends(get_session),
-                              user_id: int = Depends(get_current_user_id)):
+                              user_id: Optional[int] = Depends(get_optional_user_id)):
     """Плитка: опубликованные ресурсы с фильтром по минимальному значению.
     is_creator = 1, если ресурс создан текущим пользователем."""
     query = session.query(GreenhouseResource, likes_count_subquery(session)).filter(
@@ -76,10 +77,11 @@ def list_greenhouse_resources(min_value: Optional[float] = None,
 
 
 # ------------------------------------------------------------------ 2. GET лента
-@router.get("/feed", response_model=GreenhouseResourceFeed)
+@router.get("/feed", response_model=GreenhouseResourceFeed,
+            summary="Лента: одна карточка")
 def get_greenhouse_resource_feed(resource_id: Optional[int] = None, next: bool = False,
                                  session: Session = Depends(get_session),
-                                 user_id: int = Depends(get_current_user_id)):
+                                 user_id: Optional[int] = Depends(get_optional_user_id)):
     """Лента: одна опубликованная карточка.
     Без resource_id — первая; с ?next=true — следующая после указанной (по кругу).
     is_liked = 1, если текущий пользователь лайкнул эту карточку."""
@@ -123,7 +125,8 @@ def get_greenhouse_resource_feed(resource_id: Optional[int] = None, next: bool =
 
 
 # ------------------------------------------------------------------ 3. GET черновик
-@router.get("/draft", response_model=GreenhouseResourceDraft)
+@router.get("/draft", response_model=GreenhouseResourceDraft,
+            summary="Черновик текущего пользователя")
 def get_greenhouse_resource_draft(session: Session = Depends(get_session),
                                   user_id: int = Depends(get_current_user_id)):
     """Черновик текущего пользователя (не более одного)."""
@@ -134,7 +137,8 @@ def get_greenhouse_resource_draft(session: Session = Depends(get_session),
 
 
 # ------------------------------------------------------------------ 4. POST добавление
-@router.post("", response_model=GreenhouseResourceDraft, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=GreenhouseResourceDraft, status_code=status.HTTP_201_CREATED,
+             summary="Добавление ресурса с изображением и видео")
 def create_greenhouse_resource(resource_name: str = Form(..., min_length=1, max_length=128),
                                image: UploadFile = File(...),
                                video: UploadFile = File(...),
@@ -162,7 +166,8 @@ def create_greenhouse_resource(resource_name: str = Form(..., min_length=1, max_
 
 
 # ------------------------------------------------------------------ 5. PUT публикация
-@router.put("/{resource_id}/publish", response_model=GreenhouseResourceDraft)
+@router.put("/{resource_id}/publish", response_model=GreenhouseResourceDraft,
+            summary="Публикация черновика")
 def publish_greenhouse_resource(resource_id: int, data: GreenhouseResourcePublish,
                                 session: Session = Depends(get_session),
                                 user_id: int = Depends(get_current_user_id)):
@@ -186,7 +191,8 @@ def publish_greenhouse_resource(resource_id: int, data: GreenhouseResourcePublis
 
 
 # ------------------------------------------------------------------ 6. DELETE удаление
-@router.delete("/{resource_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{resource_id}", status_code=status.HTTP_204_NO_CONTENT,
+               summary="Логическое удаление своего ресурса")
 def delete_greenhouse_resource(resource_id: int,
                                session: Session = Depends(get_session),
                                user_id: int = Depends(get_current_user_id)):
@@ -206,7 +212,8 @@ def delete_greenhouse_resource(resource_id: int,
 
 
 # ------------------------------------------------------------------ 7. POST лайк
-@router.post("/{resource_id}/like", response_model=ResourceLikeOut)
+@router.post("/{resource_id}/like", response_model=ResourceLikeOut,
+             summary="Поставить (1) или снять (0) лайк")
 def like_greenhouse_resource(resource_id: int, data: ResourceLikeIn,
                              session: Session = Depends(get_session),
                              user_id: int = Depends(get_current_user_id)):
