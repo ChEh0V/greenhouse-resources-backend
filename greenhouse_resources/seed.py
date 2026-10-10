@@ -1,13 +1,14 @@
 """Наполнение таблиц начальными данными.
 Сами таблицы создаются миграциями Alembic: alembic upgrade head"""
 
-import hashlib
 from datetime import datetime
 
+from greenhouse_resources.minio_storage import build_minio_url
 from greenhouse_resources.models import (
     GreenhouseResource, GreenhouseUser, ResourceLike, SessionLocal,
-    STATUS_DELETED, STATUS_DRAFT, STATUS_PUBLISHED, build_minio_url,
+    STATUS_DELETED, STATUS_DRAFT, STATUS_PUBLISHED,
 )
+from greenhouse_resources.security import hash_password
 
 SEED_RESOURCES = [
     ("Площадь теплицы", "Полезная площадь под посадку. Зависит от схемы "
@@ -42,10 +43,6 @@ SEED_LIKES = [
     (1, 1), (2, 1), (1, 2), (3, 2), (4, 2), (2, 3),
     (3, 4), (1, 5), (4, 6), (2, 7),
 ]
-
-
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
 
 
 def init_database():

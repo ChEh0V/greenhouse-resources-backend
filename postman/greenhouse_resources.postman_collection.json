@@ -1,0 +1,136 @@
+{
+  "info": {
+    "name": "Ресурсы теплицы на Севере",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "resource_id", "value": "8" }
+  ],
+  "item": [
+    {
+      "name": "01 GET список ресурсов (фильтр min_value)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_resources?min_value=5",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_resources"],
+          "query": [{ "key": "min_value", "value": "5" }]
+        }
+      }
+    },
+    {
+      "name": "02 GET лента (без ид / ?resource_id=1&next=true)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_resources/feed?resource_id=1&next=true",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_resources", "feed"],
+          "query": [
+            { "key": "resource_id", "value": "1" },
+            { "key": "next", "value": "true" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "03 GET черновик",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_resources/draft",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_resources", "draft"]
+        }
+      }
+    },
+    {
+      "name": "04 POST добавление ресурса с изображением и видео",
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "resource_name", "value": "Досвечивание LED", "type": "text" },
+            { "key": "image", "type": "file", "src": "" },
+            { "key": "video", "type": "file", "src": "" }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_resources",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_resources"]
+        }
+      }
+    },
+    {
+      "name": "05 PUT публикация ресурса",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"short_description\": \"Приток свежего воздуха для теплицы\",\n  \"unit\": \"м³/ч\",\n  \"min_value\": 150\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_resources/{{resource_id}}/publish",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_resources", "{{resource_id}}", "publish"]
+        }
+      }
+    },
+    {
+      "name": "06 DELETE удаление ресурса",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_resources/3",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_resources", "3"]
+        }
+      }
+    },
+    {
+      "name": "07 POST лайк ресурса",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"is_liked\": 1\n}" },
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_resources/4/like",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_resources", "4", "like"]
+        }
+      }
+    },
+    {
+      "name": "08 POST регистрация",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"login\": \"technologist\",\n  \"password\": \"technologist123\"\n}" },
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_users/register",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_users", "register"]
+        }
+      }
+    },
+    {
+      "name": "09 POST аутентификация",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"login\": \"chekhovich\",\n  \"password\": \"chekhovich123\"\n}" },
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_users/login",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_users", "login"]
+        }
+      }
+    },
+    {
+      "name": "10 POST деавторизация",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{base_url}}/api/greenhouse_users/logout",
+          "host": ["{{base_url}}"], "path": ["api", "greenhouse_users", "logout"]
+        }
+      }
+    }
+  ]
+}

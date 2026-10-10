@@ -1,7 +1,7 @@
 fastapi==0.115.6
 uvicorn[standard]
-jinja2
 python-multipart
 sqlalchemy==2.0.36
 psycopg2-binary
 alembic
+minio

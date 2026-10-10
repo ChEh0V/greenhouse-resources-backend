@@ -18,16 +18,19 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autoflush=False)
 Base = declarative_base()
 
+
+def get_session():
+    """Сессия БД на время одного HTTP-запроса."""
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+
 STATUS_DRAFT = "draft"
 STATUS_PUBLISHED = "published"
 STATUS_DELETED = "deleted"
 
-MINIO_BASE_URL = "http://localhost:9000/greenhouse"
-
-# Изображение и видео по умолчанию хранятся на SSR-сервере вместе с иконками,
-# а не в Minio
-DEFAULT_IMAGE_URL = "/static/img/default_resource.jpg"
-DEFAULT_VIDEO_URL = "/static/video/default_resource.mp4"
 
 
 class GreenhouseUser(Base):
@@ -79,6 +82,3 @@ class ResourceLike(Base):
         nullable=False,
     )
 
-
-def build_minio_url(file_key):
-    return f"{MINIO_BASE_URL}/{file_key}"
