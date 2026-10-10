@@ -22,9 +22,12 @@ STATUS_DRAFT = "draft"
 STATUS_PUBLISHED = "published"
 STATUS_DELETED = "deleted"
 
-DEFAULT_IMAGE_KEY = "default_resource.jpg"
-DEFAULT_VIDEO_KEY = "default_resource.mp4"
 MINIO_BASE_URL = "http://localhost:9000/greenhouse"
+
+# Изображение и видео по умолчанию хранятся на SSR-сервере вместе с иконками,
+# а не в Minio
+DEFAULT_IMAGE_URL = "/static/img/default_resource.jpg"
+DEFAULT_VIDEO_URL = "/static/video/default_resource.mp4"
 
 
 class GreenhouseUser(Base):
@@ -33,8 +36,7 @@ class GreenhouseUser(Base):
 
     user_id = Column(Integer, primary_key=True)
     login = Column(String(64), nullable=False, unique=True)
-    full_name = Column(String(128), nullable=False)
-    is_agronomist = Column(Integer, nullable=False, default=0)
+    password = Column(String(128), nullable=False)
 
 
 class GreenhouseResource(Base):
@@ -45,8 +47,8 @@ class GreenhouseResource(Base):
     resource_name = Column(String(128), nullable=False)
     short_description = Column(Text, nullable=True)
     resource_status = Column(String(16), nullable=False, default=STATUS_DRAFT)
-    image_url = Column(String(256), nullable=True)
-    video_url = Column(String(256), nullable=True)
+    image_url = Column(String(256), nullable=False)
+    video_url = Column(String(256), nullable=False)
     # два поля по предметной области
     unit = Column(String(16), nullable=True)
     min_value = Column(Float, nullable=True)
@@ -79,4 +81,4 @@ class ResourceLike(Base):
 
 
 def build_minio_url(file_key):
-    return f"{MINIO_BASE_URL}/{file_key}" if file_key else ""
+    return f"{MINIO_BASE_URL}/{file_key}"

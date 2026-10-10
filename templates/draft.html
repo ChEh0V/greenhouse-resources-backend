@@ -1,63 +1,59 @@
 {% extends "base.html" %}
+{% from "media.html" import resource_image, resource_video %}
 {% block content %}
 
 <section class="resource-draft">
 
-    <header class="resource-draft__header">
-        <h1 class="resource-draft__title">Добавление</h1>
-        <span class="status-badge status-badge--draft">Черновик</span>
-    </header>
+    <h1 class="resource-draft__title">Добавление</h1>
 
     {% if resource %}
-    <div class="upload-row">
-        <div class="upload-field">
-            <span class="upload-field__icon">&#9654;</span>
-            Видео ресурса
-        </div>
-        <div class="upload-field">
-            <span class="upload-field__icon">&#9632;</span>
-            Изображение
-        </div>
+    <!-- черновик создан: файлы уже не выбираются, показываются его фото и видео -->
+    <div class="media-stack">
+        {{ resource_video(resource.video_url, "media-stack__preview") }}
+        {{ resource_image(resource.image_url, "media-stack__preview", resource.resource_name) }}
     </div>
-
-    <label class="form-label" for="resource_name">Название ресурса</label>
-    <input class="form-input" id="resource_name" type="text"
-           value="{{ resource.resource_name }}">
-
-    <label class="form-label" for="equipment">Оборудование</label>
-    <input class="form-input" id="equipment" type="text"
-           value="{{ resource.equipment }}">
-
-    <label class="form-label" for="unit">Единица измерения</label>
-    <select class="form-input" id="unit">
-        <option {% if resource.unit == 'м²' %}selected{% endif %}>м²</option>
-        <option {% if resource.unit == 'кВт·ч' %}selected{% endif %}>кВт·ч</option>
-        <option {% if resource.unit == 'Гкал' %}selected{% endif %}>Гкал</option>
-        <option {% if resource.unit == 'м³' %}selected{% endif %}>м³</option>
-        <option {% if resource.unit == 'кг' %}selected{% endif %}>кг</option>
-        <option {% if resource.unit == 'м³/ч' %}selected{% endif %}>м³/ч</option>
-    </select>
-
-    <label class="form-label" for="min_value">Минимальное значение</label>
-    <input class="form-input" id="min_value" type="number" step="0.1"
-           value="{{ resource.min_value }}">
-
-    <label class="form-label" for="short_description">Описание</label>
-    <textarea class="form-input form-input--area" id="short_description"
-              rows="3">{{ resource.short_description }}</textarea>
 
     <form method="post" action="/greenhouse_resources/publish">
         <input type="hidden" name="resource_id" value="{{ resource.resource_id }}">
-        <input type="hidden" name="short_description" value="{{ resource.short_description }}">
-        <input type="hidden" name="unit" value="{{ resource.unit }}">
-        <input type="hidden" name="min_value" value="{{ resource.min_value or 0 }}">
+
+        <p class="resource-draft__name">{{ resource.resource_name }}</p>
+
+        <label class="form-label" for="short_description">Краткое описание</label>
+        <textarea class="form-input form-input--area" id="short_description"
+                  name="short_description" rows="3" required>{{ resource.short_description or "" }}</textarea>
+
+        <label class="form-label" for="unit">Единица измерения</label>
+        <input class="form-input" id="unit" name="unit" type="text" maxlength="16"
+               value="{{ resource.unit or '' }}" placeholder="кВт·ч" required>
+
+        <label class="form-label" for="min_value">Минимальное значение</label>
+        <input class="form-input" id="min_value" name="min_value" type="number" step="0.1" min="0"
+               value="{{ resource.min_value if resource.min_value is not none else '' }}" required>
+
         <button class="greenhouse-button" type="submit">Опубликовать</button>
     </form>
+
     {% else %}
+    <!-- черновика нет: выбор файлов из проводника, название и «Далее».
+         У полей файлов нет атрибута name — в этой лабораторной файлы на сервер не передаются -->
     <form method="post" action="/greenhouse_resources/create">
-        <label class="form-label" for="new_name">Название ресурса</label>
-        <input class="form-input" id="new_name" name="resource_name" type="text" required>
-        <p class="form-note">Изображение и видео подставляются по умолчанию.</p>
+        <div class="media-stack">
+            {{ resource_video("", "media-stack__preview") }}
+            <label class="file-picker">
+                Выбрать видео
+                <input type="file" accept="video/*">
+            </label>
+            {{ resource_image("", "media-stack__preview") }}
+            <label class="file-picker">
+                Выбрать изображение
+                <input type="file" accept="image/*">
+            </label>
+        </div>
+
+        <label class="form-label" for="resource_name">Название ресурса</label>
+        <input class="form-input" id="resource_name" name="resource_name" type="text"
+               maxlength="128" required>
+
         <button class="greenhouse-button" type="submit">Далее</button>
     </form>
     {% endif %}

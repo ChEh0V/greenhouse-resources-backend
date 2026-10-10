@@ -1,32 +1,42 @@
 {% extends "base.html" %}
+{% from "media.html" import resource_image, resource_video %}
 {% block content %}
 
 {% if resource %}
 <section class="resource-feed">
 
-    <video class="resource-feed__video"
-           autoplay muted loop playsinline
-           poster="{{ resource.image_url }}">
-        <source src="{{ resource.video_url }}" type="video/mp4">
-    </video>
+    {{ resource_video(resource.video_url, "resource-feed__video") }}
 
-    <div class="resource-feed__actions">
-        <span class="resource-feed__action">&#9829;<em>{{ resource.likes_count }}</em></span>
-        <span class="resource-feed__action">&#9834;</span>
+    <!-- справа: лайк, два поля по теме, кнопка «следующий» -->
+    <aside class="resource-feed__side">
+        <span class="resource-feed__action">&#9829;<em>{{ likes_count }}</em></span>
+        <span class="resource-feed__field">
+            <small>ед. изм.</small>{{ resource.unit }}
+        </span>
+        <span class="resource-feed__field">
+            <small>мин.</small>{{ resource.min_value }}
+        </span>
         <a class="resource-feed__action resource-feed__next"
-           href="/greenhouse_resources/feed?resource_id={{ resource.resource_id }}&next=true">&#8594;</a>
-    </div>
+           href="/greenhouse_resources/feed?resource_id={{ resource.resource_id }}&next=true">&#8595;</a>
+    </aside>
 
+    <!-- внизу: название и описание с «ещё / меньше» без JavaScript -->
     <div class="resource-feed__info">
-        <p class="resource-feed__name">{{ resource.resource_name }}</p>
-        <p class="resource-feed__value">от {{ resource.min_value }} {{ resource.unit }}</p>
-        <p class="resource-feed__equipment">{{ resource.equipment }}</p>
+        <div class="resource-feed__title">
+            {{ resource_image(resource.image_url, "resource-feed__avatar", resource.resource_name) }}
+            <p class="resource-feed__name">{{ resource.resource_name }}</p>
+        </div>
+        <input class="more-toggle" type="checkbox" id="more-{{ resource.resource_id }}">
         <p class="resource-feed__description">{{ resource.short_description }}</p>
+        <label class="more-label" for="more-{{ resource.resource_id }}">
+            <span class="more-label__more">ещё</span>
+            <span class="more-label__less">меньше</span>
+        </label>
     </div>
 
 </section>
 {% else %}
-<p class="empty-state">Опубликованных ресурсов пока нет.</p>
+<p class="empty-state">Ресурс не найден.</p>
 {% endif %}
 
 {% endblock %}

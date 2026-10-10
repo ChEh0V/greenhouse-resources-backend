@@ -21,7 +21,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background: var(--greenhouse-white);
+    background: #EEF1F4;
     color: var(--greenhouse-navy);
     font-family: Inter, "Segoe UI", Arial, sans-serif;
     display: flex;
@@ -48,6 +48,7 @@ body {
 .resource-feed {
     position: relative;
     height: 768px;
+    overflow: hidden;
     background: var(--greenhouse-navy);
 }
 
@@ -60,29 +61,47 @@ body {
     z-index: 0;
 }
 
-.resource-feed__actions {
+/* Правая колонка поверх видео: лайк, два поля по теме, «следующий» */
+.resource-feed__side {
     position: absolute;
     right: 12px;
-    bottom: 180px;
+    bottom: 140px;
     z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    align-items: center;
+    gap: 14px;
     text-align: center;
 }
 
-.resource-feed__action {
-    width: 44px;
-    height: 44px;
+.resource-feed__action,
+.resource-feed__field {
+    width: 56px;
+    min-height: 56px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     border-radius: var(--greenhouse-radius-pill);
-    background: rgba(5, 29, 52, 0.55);
+    background: rgba(5, 29, 52, 0.6);
     color: var(--greenhouse-white);
-    font-size: 18px;
+    font-size: 20px;
     text-decoration: none;
+}
+
+.resource-feed__field {
+    border-radius: var(--greenhouse-radius);
+    padding: 6px 4px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--greenhouse-accent);
+}
+
+.resource-feed__field small {
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--greenhouse-white);
+    opacity: 0.8;
 }
 
 .resource-feed__action em {
@@ -99,72 +118,104 @@ body {
 
 .resource-feed__next:hover { background: var(--greenhouse-white); }
 
+/* Нижняя часть поверх видео: название и описание */
 .resource-feed__info {
     position: absolute;
     left: 0;
-    right: 72px;
+    right: 80px;
     bottom: 0;
     z-index: 1;
     padding: var(--greenhouse-padding);
-    background: rgba(5, 29, 52, 0.78);
+    background: linear-gradient(transparent, rgba(5, 29, 52, 0.85) 30%);
     color: var(--greenhouse-white);
 }
 
-.resource-feed__name  { font-size: 20px; font-weight: 600; }
-
-.resource-feed__value {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--greenhouse-accent);
+.resource-feed__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
 }
 
-.resource-feed__equipment { font-size: 13px; opacity: 0.75; }
-
-/* Короткое описание в одну строку */
-.resource-feed__description {
-    margin-top: 6px;
-    font-size: 13px;
-    white-space: nowrap;
+.resource-feed__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--greenhouse-accent);
+    object-fit: cover;
     overflow: hidden;
-    text-overflow: ellipsis;
+    flex-shrink: 0;
 }
+
+.resource-feed__name { font-size: 18px; font-weight: 600; }
+
+/* Описание свёрнуто в две строки, «ещё» раскрывает его.
+   Переключение через скрытый checkbox и label — без JavaScript */
+.more-toggle { display: none; }
+
+.resource-feed__description {
+    font-size: 13px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.more-toggle:checked ~ .resource-feed__description {
+    -webkit-line-clamp: unset;
+    display: block;
+}
+
+.more-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--greenhouse-accent);
+    cursor: pointer;
+}
+
+.more-label__less { display: none; }
+.more-toggle:checked ~ .more-label .more-label__more { display: none; }
+.more-toggle:checked ~ .more-label .more-label__less { display: inline; }
 
 /* ---------- Страница добавления ---------- */
 
 .resource-draft { padding: var(--greenhouse-padding); }
 
-.resource-draft__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-}
+.resource-draft__title { font-size: 24px; margin-bottom: 16px; }
 
-.resource-draft__title { font-size: 24px; }
+.resource-draft__name { font-size: 18px; font-weight: 600; margin-top: 4px; }
 
-.upload-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--greenhouse-gap);
-    margin-bottom: 18px;
-}
-
-.upload-field {
-    height: 120px;
+/* Видео и фото друг под другом */
+.media-stack {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.media-stack__preview {
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--greenhouse-radius);
+    background: var(--greenhouse-navy);
+}
+
+.file-picker {
+    display: block;
+    padding: 10px 14px;
     border: 1px dashed rgba(5, 29, 52, 0.35);
     border-radius: var(--greenhouse-radius);
     font-size: 12px;
     color: rgba(5, 29, 52, 0.6);
+    cursor: pointer;
 }
 
-.upload-field:hover { border-color: var(--greenhouse-accent); }
+.file-picker:hover { border-color: var(--greenhouse-accent); }
 
-.upload-field__icon { font-size: 20px; }
+.file-picker input { display: block; margin-top: 6px; font-size: 12px; }
 
 .form-label {
     display: block;
@@ -189,11 +240,23 @@ body {
 
 .form-input--area { height: auto; padding: 12px 14px; }
 
-.form-note {
-    margin-top: 16px;
-    font-size: 12px;
-    color: rgba(5, 29, 52, 0.55);
+/* Полукруглая кнопка */
+.greenhouse-button {
+    width: 100%;
+    height: 44px;
+    margin-top: 18px;
+    background: var(--greenhouse-accent);
+    color: var(--greenhouse-navy);
+    border: none;
+    border-radius: var(--greenhouse-radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
 }
+
+.greenhouse-button:hover  { background: var(--greenhouse-navy); color: var(--greenhouse-white); }
+.greenhouse-button:active { background: rgba(0, 191, 114, 0.7); }
 
 /* ---------- Плитка ---------- */
 
@@ -213,35 +276,12 @@ body {
     color: var(--greenhouse-white);
 }
 
-.resource-filter__label { display: block; font-size: 13px; margin-bottom: 10px; }
+.resource-filter__label { display: block; font-size: 13px; margin-bottom: 8px; }
 
-.resource-filter__slider { width: 100%; accent-color: var(--greenhouse-accent); }
+.resource-filter .greenhouse-button { margin-top: 12px; }
+.resource-filter .greenhouse-button:hover { background: var(--greenhouse-white); color: var(--greenhouse-navy); }
 
-.resource-filter__bounds {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    opacity: 0.6;
-    margin-bottom: 12px;
-}
-
-/* Полукруглая кнопка */
-.greenhouse-button {
-    width: 100%;
-    height: 44px;
-    background: var(--greenhouse-accent);
-    color: var(--greenhouse-navy);
-    border: none;
-    border-radius: var(--greenhouse-radius-pill);
-    font-size: 14px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-}
-
-.greenhouse-button:hover  { background: var(--greenhouse-white); }
-.greenhouse-button:active { background: rgba(0, 191, 114, 0.7); }
-
+/* Две колонки карточек */
 .resource-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -249,14 +289,14 @@ body {
     padding: 0 var(--greenhouse-padding);
 }
 
-/* Белые карточки */
+/* Белые карточки: ссылка на ленту + кнопка удаления внутри карточки */
 .resource-card {
+    display: flex;
+    flex-direction: column;
     background: var(--greenhouse-white);
     border: 1px solid rgba(5, 29, 52, 0.15);
     border-radius: var(--greenhouse-radius);
     overflow: hidden;
-    text-decoration: none;
-    color: inherit;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -265,19 +305,22 @@ body {
     box-shadow: 0 0 0 1px var(--greenhouse-accent);
 }
 
-.resource-card:active { border-color: var(--greenhouse-navy); }
-
-.resource-card__image {
-    width: 100%;
-    height: 96px;
-    object-fit: cover;
-    display: block;
+.resource-card__link {
+    flex: 1;
+    color: inherit;
+    text-decoration: none;
 }
 
-.resource-card__body { padding: 10px 12px 12px; }
+.resource-card__image {
+    display: block;
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+}
+
+.resource-card__body { padding: 10px 12px 6px; }
 
 .resource-card__name  { font-size: 14px; font-weight: 600; }
-.resource-card__unit  { font-size: 11px; color: rgba(5, 29, 52, 0.55); }
 
 .resource-card__value {
     margin-top: 4px;
@@ -292,18 +335,19 @@ body {
     color: rgba(5, 29, 52, 0.55);
 }
 
-/* ---------- Статусы услуги ---------- */
-
-.status-badge {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: var(--greenhouse-radius-pill);
-    font-size: 11px;
+.resource-card__delete {
+    width: 100%;
+    height: 32px;
+    border: none;
+    border-top: 1px solid rgba(5, 29, 52, 0.1);
+    background: transparent;
+    color: rgba(5, 29, 52, 0.55);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
 }
 
-.status-badge--draft     { background: var(--greenhouse-navy);   color: var(--greenhouse-accent); }
-.status-badge--published { background: var(--greenhouse-accent); color: var(--greenhouse-navy); }
-.status-badge--deleted   { border: 1px solid rgba(5, 29, 52, 0.4); color: rgba(5, 29, 52, 0.55); }
+.resource-card__delete:hover { background: var(--greenhouse-navy); color: var(--greenhouse-white); }
 
 /* ---------- Панель вкладок ---------- */
 
@@ -335,15 +379,3 @@ body {
 .tab-bar__item:hover { color: var(--greenhouse-navy); }
 
 .tab-bar__item--active { color: var(--greenhouse-accent); font-weight: 600; }
-
-.greenhouse-button--small { height: 32px; font-size: 12px; margin-top: 6px; }
-.resource-card__delete { margin-bottom: 4px; }
-
-.resource-grid > form { margin: 0; }
-.resource-card { grid-column: auto; }
-.resource-grid { grid-auto-flow: row; }
-.resource-card__delete { grid-column: span 1; }
-
-.resource-grid { grid-template-columns: repeat(2, 1fr); }
-.resource-card__delete { display: contents; }
-.resource-card__delete button { width: 100%; }
