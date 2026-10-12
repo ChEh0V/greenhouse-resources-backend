@@ -141,7 +141,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"short_description\": \"Приток свежего воздуха для теплицы\",\n  \"unit\": \"м³/ч\",\n  \"min_value\": 150\n}"
+          "raw": "{\n  \"short_description\": \"Светодиодные модули для досвечивания рассады в полярную ночь\",\n  \"unit\": \"кВт·ч\",\n  \"min_value\": 20\n}"
         },
         "url": {
           "raw": "{{base_url}}/api/greenhouse_resources/{{resource_id}}/publish",
