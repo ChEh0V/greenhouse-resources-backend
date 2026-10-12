@@ -32,7 +32,8 @@ SEED_RESOURCES = [
     ("Субстрат", "Корнеобитаемая среда вместо грунта. Заменяется каждый "
      "производственный цикл.",
      STATUS_PUBLISHED, "substrate", "м³", 1.5),
-    # обязательный черновик: файлов в Minio нет — показываются файлы по умолчанию
+    # обязательный черновик — у пользователя planner, чтобы создатель (chekhovich)
+    # мог добавить новый ресурс: у пользователя не более одного черновика
     ("Вентиляция", None, STATUS_DRAFT, "ventilation_draft", None, None),
     # обязательная удалённая услуга
     ("Досветка натриевыми лампами", "Устаревшая технология досветки.",
@@ -67,7 +68,7 @@ def init_database():
                 min_value=value,
                 created_at=datetime.now(),
                 published_at=datetime.now() if status == STATUS_PUBLISHED else None,
-                creator_id=2,
+                creator_id=3 if status == STATUS_DRAFT else 2,
             ))
             session.flush()
 
