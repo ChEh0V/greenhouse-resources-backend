@@ -9,8 +9,11 @@
     {% if resource %}
     <!-- черновик создан: файлы уже не выбираются, показываются его фото и видео -->
     <div class="media-stack">
+        <p class="media-stack__caption">Видео</p>
         {{ resource_video(resource.video_url, "media-stack__preview") }}
+        <p class="media-stack__caption">Изображение</p>
         {{ resource_image(resource.image_url, "media-stack__preview", resource.resource_name) }}
+        <p class="form-note">В этой лабораторной файлы не сохраняются — показываются видео и изображение по умолчанию.</p>
     </div>
 
     <form method="post" action="/greenhouse_resources/publish">
@@ -24,7 +27,7 @@
 
         <label class="form-label" for="unit">Единица измерения</label>
         <input class="form-input" id="unit" name="unit" type="text" maxlength="16"
-               value="{{ resource.unit or '' }}" placeholder="кВт·ч" required>
+               value="{{ resource.unit or '' }}" placeholder="например, кВт·ч" required>
 
         <label class="form-label" for="min_value">Минимальное значение</label>
         <input class="form-input" id="min_value" name="min_value" type="number" step="0.1" min="0"
@@ -38,11 +41,13 @@
          У полей файлов нет атрибута name — в этой лабораторной файлы на сервер не передаются -->
     <form method="post" action="/greenhouse_resources/create">
         <div class="media-stack">
+            <p class="media-stack__caption">Видео по умолчанию</p>
             {{ resource_video("", "media-stack__preview") }}
             <label class="file-picker">
                 Выбрать видео
                 <input type="file" accept="video/*">
             </label>
+            <p class="media-stack__caption">Изображение по умолчанию</p>
             {{ resource_image("", "media-stack__preview") }}
             <label class="file-picker">
                 Выбрать изображение
