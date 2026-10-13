@@ -35,6 +35,12 @@ docker exec -it greenhouse_redis redis-cli KEYS "session:*"
 docker exec -it greenhouse_redis redis-cli GET session:<ид>
 ```
 
+Lua-скрипт со списком активных сессий (пользователь и оставшееся время жизни):
+
+```bash
+docker exec greenhouse_redis redis-cli --eval /scripts/active_sessions.lua
+```
+
 ## HTTP-методы
 
 ### Домен ресурсов теплицы `/api/greenhouse_resources`
