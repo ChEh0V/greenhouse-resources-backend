@@ -3,81 +3,26 @@
     "name": "Ресурсы теплицы на Севере",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:8000"
-    },
-    {
-      "key": "resource_id",
-      "value": "10"
-    }
-  ],
   "item": [
     {
       "name": "01 GET список ресурсов (фильтр min_value)",
       "request": {
         "method": "GET",
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_resources?min_value=5",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_resources"
-          ],
-          "query": [
-            {
-              "key": "min_value",
-              "value": "5"
-            }
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_resources?min_value=5"
       }
     },
     {
       "name": "02 GET лента (без ид / ?resource_id=1&next=true)",
       "request": {
         "method": "GET",
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_resources/feed?resource_id=1&next=true",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_resources",
-            "feed"
-          ],
-          "query": [
-            {
-              "key": "resource_id",
-              "value": "1"
-            },
-            {
-              "key": "next",
-              "value": "true"
-            }
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_resources/feed?resource_id=1&next=true"
       }
     },
     {
       "name": "03 GET черновик",
       "request": {
         "method": "GET",
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_resources/draft",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_resources",
-            "draft"
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_resources/draft"
       }
     },
     {
@@ -104,30 +49,8 @@
             }
           ]
         },
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_resources",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_resources"
-          ]
-        }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (pm.response.code === 201) {",
-              "    pm.collectionVariables.set('resource_id', pm.response.json().resource_id);",
-              "}"
-            ]
-          }
-        }
-      ]
+        "url": "http://localhost:8000/api/greenhouse_resources"
+      }
     },
     {
       "name": "05 PUT публикация ресурса",
@@ -143,35 +66,14 @@
           "mode": "raw",
           "raw": "{\n  \"short_description\": \"Светодиодные модули для досвечивания рассады в полярную ночь\",\n  \"unit\": \"кВт·ч\",\n  \"min_value\": 20\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_resources/{{resource_id}}/publish",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_resources",
-            "{{resource_id}}",
-            "publish"
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_resources/10/publish"
       }
     },
     {
       "name": "06 DELETE удаление ресурса",
       "request": {
         "method": "DELETE",
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_resources/3",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_resources",
-            "3"
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_resources/3"
       }
     },
     {
@@ -188,18 +90,7 @@
           "mode": "raw",
           "raw": "{\n  \"is_liked\": 1\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_resources/4/like",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_resources",
-            "4",
-            "like"
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_resources/4/like"
       }
     },
     {
@@ -216,17 +107,7 @@
           "mode": "raw",
           "raw": "{\n  \"login\": \"technologist\",\n  \"password\": \"technologist123\"\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_users/register",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_users",
-            "register"
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_users/register"
       }
     },
     {
@@ -243,34 +124,14 @@
           "mode": "raw",
           "raw": "{\n  \"login\": \"chekhovich\",\n  \"password\": \"chekhovich123\"\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_users/login",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_users",
-            "login"
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_users/login"
       }
     },
     {
       "name": "10 POST деавторизация",
       "request": {
         "method": "POST",
-        "url": {
-          "raw": "{{base_url}}/api/greenhouse_users/logout",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "greenhouse_users",
-            "logout"
-          ]
-        }
+        "url": "http://localhost:8000/api/greenhouse_users/logout"
       }
     }
   ]
