@@ -1,7 +1,7 @@
 """Сериализаторы (Pydantic-схемы) входных и выходных данных API.
 Системные поля (ид, статус, создатель, даты) с клиента не принимаются."""
 
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -18,6 +18,12 @@ class GreenhouseResourceCard(BaseModel):
     is_creator: Literal[0, 1]
 
 
+class ResourceAttributeOut(BaseModel):
+    """Атрибут ресурса и его значение."""
+    attribute_name: str
+    attribute_value: str
+
+
 class GreenhouseResourceFeed(BaseModel):
     """Одна карточка ленты."""
     resource_id: int
@@ -29,6 +35,7 @@ class GreenhouseResourceFeed(BaseModel):
     min_value: Optional[float]
     likes_count: int
     is_liked: Literal[0, 1]
+    attributes: List[ResourceAttributeOut]
 
 
 class GreenhouseResourceDraft(BaseModel):

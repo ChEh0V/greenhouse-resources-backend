@@ -9,12 +9,13 @@ from sqlalchemy.orm import Session
 
 from greenhouse_resources.minio_storage import upload_resource_file
 from greenhouse_resources.models import (
-    GreenhouseResource, ResourceLike, STATUS_DELETED, STATUS_DRAFT, STATUS_PUBLISHED,
+    GreenhouseResource, ResourceAttribute, ResourceAttributeValue, ResourceLike,
+    STATUS_DELETED, STATUS_DRAFT, STATUS_PUBLISHED,
     get_session,
 )
 from greenhouse_resources.schemas import (
     GreenhouseResourceCard, GreenhouseResourceDraft, GreenhouseResourceFeed,
-    GreenhouseResourcePublish, ResourceLikeIn, ResourceLikeOut,
+    GreenhouseResourcePublish, ResourceAttributeOut, ResourceLikeIn, ResourceLikeOut,
 )
 from greenhouse_resources.auth import get_current_user_id, get_optional_user_id
 
@@ -111,6 +112,14 @@ def get_greenhouse_resource_feed(resource_id: Optional[int] = None, next: bool =
         raise HTTPException(status.HTTP_404_NOT_FOUND)
 
     resource, likes_count, liked = row
+    attributes = (
+        session.query(ResourceAttribute.attribute_name, ResourceAttributeValue.attribute_value)
+        .join(ResourceAttributeValue,
+              ResourceAttributeValue.attribute_id == ResourceAttribute.attribute_id)
+        .filter(ResourceAttributeValue.resource_id == resource.resource_id)
+        .order_by(ResourceAttribute.attribute_id)
+        .all()
+    )
     return GreenhouseResourceFeed(
         resource_id=resource.resource_id,
         resource_name=resource.resource_name,
@@ -121,6 +130,8 @@ def get_greenhouse_resource_feed(resource_id: Optional[int] = None, next: bool =
         min_value=resource.min_value,
         likes_count=likes_count,
         is_liked=int(liked > 0),
+        attributes=[ResourceAttributeOut(attribute_name=name, attribute_value=value)
+                    for name, value in attributes],
     )
 
 

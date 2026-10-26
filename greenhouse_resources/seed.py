@@ -5,7 +5,8 @@ from datetime import datetime
 
 from greenhouse_resources.minio_storage import build_minio_url
 from greenhouse_resources.models import (
-    GreenhouseResource, GreenhouseUser, ResourceLike, SessionLocal,
+    GreenhouseResource, GreenhouseUser, ResourceAttribute, ResourceAttributeValue, ResourceLike,
+    SessionLocal,
     STATUS_DELETED, STATUS_DRAFT, STATUS_PUBLISHED,
 )
 from greenhouse_resources.security import hash_password
@@ -45,11 +46,49 @@ SEED_LIKES = [
     (3, 4), (1, 5), (4, 6), (2, 7),
 ]
 
+# Дополнительные характеристики ресурсов (вертикальная таблица атрибутов).
+# У каждого ресурса свой набор: незаполненные атрибуты просто отсутствуют.
+SEED_ATTRIBUTES = ["Оборудование", "Производитель", "Срок службы", "Норма на 1 м² теплицы"]
+SEED_ATTRIBUTE_VALUES = {
+    1: {"Оборудование": "Теплица из поликарбоната 4 мм", "Производитель": "Воля",
+        "Срок службы": "15 лет"},
+    2: {"Оборудование": "Фитооблучатели LED", "Производитель": "Philips GreenPower",
+        "Срок службы": "35 000 ч", "Норма на 1 м² теплицы": "0,25 кВт·ч в сутки"},
+    3: {"Оборудование": "Газовый котёл", "Производитель": "Viessmann Vitoplex 100",
+        "Срок службы": "20 лет"},
+    4: {"Оборудование": "Капельная система полива", "Производитель": "Netafim",
+        "Норма на 1 м² теплицы": "4 л в сутки"},
+    5: {"Оборудование": "Система дозирования CO2", "Производитель": "Priva",
+        "Норма на 1 м² теплицы": "0,8 г в час"},
+    6: {"Оборудование": "Водорастворимые удобрения", "Производитель": "Yara"},
+    7: {"Оборудование": "Минеральная вата", "Производитель": "Grodan", "Срок службы": "1 сезон"},
+}
+
+
+def init_attributes(session):
+    """Атрибуты добавляются отдельно, чтобы появиться и в уже заполненной базе."""
+    if session.query(ResourceAttribute).count() > 0:
+        return
+    ids = {}
+    for name in SEED_ATTRIBUTES:
+        attribute = ResourceAttribute(attribute_name=name)
+        session.add(attribute)
+        session.flush()
+        ids[name] = attribute.attribute_id
+    for resource_id, values in SEED_ATTRIBUTE_VALUES.items():
+        if session.get(GreenhouseResource, resource_id) is None:
+            continue
+        for name, value in values.items():
+            session.add(ResourceAttributeValue(resource_id=resource_id, attribute_id=ids[name],
+                                               attribute_value=value))
+    session.commit()
+
 
 def init_database():
     session = SessionLocal()
     try:
         if session.query(GreenhouseUser).count() > 0:
+            init_attributes(session)
             return
 
         # ид назначаются последовательностью: 1..4 в порядке добавления
@@ -76,5 +115,6 @@ def init_database():
             session.add(ResourceLike(user_id=user_id, resource_id=resource_id))
 
         session.commit()
+        init_attributes(session)
     finally:
         session.close()

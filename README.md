@@ -41,6 +41,12 @@ Lua-скрипт со списком активных сессий (пользо
 docker exec greenhouse_redis redis-cli --eval /scripts/active_sessions.lua
 ```
 
+То же самое одной командой `EVAL` прямо в `redis-cli`:
+
+```
+EVAL "local r = {} for _, k in ipairs(redis.call('KEYS', 'session:*')) do table.insert(r, k .. ' -> ' .. redis.call('GET', k)) end return r" 0
+```
+
 ## HTTP-методы
 
 ### Домен ресурсов теплицы `/api/greenhouse_resources`
@@ -48,7 +54,7 @@ docker exec greenhouse_redis redis-cli --eval /scripts/active_sessions.lua
 | № | Метод | URL | Вход | Выход |
 |---|---|---|---|---|
 | 1 | GET | `/api/greenhouse_resources` | query `min_value: float` (необязательно) | `[{resource_id, resource_name, image_url, min_value, likes_count, is_creator: 0/1}]` — только опубликованные |
-| 2 | GET | `/api/greenhouse_resources/feed` | query `resource_id: int`, `next: bool` (необязательно) | `{resource_id, resource_name, short_description, image_url, video_url, unit, min_value, likes_count, is_liked: 0/1}` — одна опубликованная карточка |
+| 2 | GET | `/api/greenhouse_resources/feed` | query `resource_id: int`, `next: bool` (необязательно) | `{resource_id, resource_name, short_description, image_url, video_url, unit, min_value, likes_count, is_liked: 0/1, attributes: [{attribute_name, attribute_value}]}` — одна опубликованная карточка с её атрибутами |
 | 3 | GET | `/api/greenhouse_resources/draft` | — | `{resource_id, resource_name, short_description, image_url, video_url, unit, min_value}` — черновик пользователя, 404 если нет |
 | 4 | POST | `/api/greenhouse_resources` | form-data `resource_name: str`, `image: file`, `video: file` | 201, черновик (как в п.3); 409 если черновик уже есть |
 | 5 | PUT | `/api/greenhouse_resources/{resource_id}/publish` | JSON `{short_description: str, unit: str, min_value: float}` | ресурс (как в п.3), статус draft → published |
@@ -100,3 +106,22 @@ docker exec greenhouse_redis redis-cli --eval /scripts/active_sessions.lua
 | `resource_id` | integer, FK → `greenhouse_resources`, not null | что лайкнули |
 
 Пара (`user_id`, `resource_id`) уникальна. Каскадное удаление запрещено (`ON DELETE RESTRICT`).
+
+### `resource_attributes` — атрибуты ресурсов (справочник дополнительных характеристик)
+
+| Столбец | Тип | Описание |
+|---|---|---|
+| `attribute_id` | integer, PK | идентификатор |
+| `attribute_name` | varchar(64), unique, not null | название атрибута («Производитель», «Срок службы» и т. д.) |
+
+### `resource_attribute_values` — значения атрибутов (м-м ресурс–атрибут, вертикальная таблица)
+
+| Столбец | Тип | Описание |
+|---|---|---|
+| `value_id` | integer, PK | идентификатор |
+| `resource_id` | integer, FK → `greenhouse_resources`, not null | ресурс |
+| `attribute_id` | integer, FK → `resource_attributes`, not null | атрибут |
+| `attribute_value` | varchar(128), not null | значение |
+
+Пара (`resource_id`, `attribute_id`) уникальна. Набор атрибутов у каждого ресурса свой:
+новые характеристики добавляются строками, без изменения структуры БД.
